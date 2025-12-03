@@ -1,13 +1,15 @@
+from functools import lru_cache
 import sys
 from typing import Generator
 
 
-def divisors(n: int) -> Generator[int, None, None]:
+def divisors_generator(n: int) -> Generator[int, None, None]:
     for i in range(1, n // 2 + 1):
         if n % i == 0:
             yield i
 
 
+@lru_cache(maxsize=1_000_000)
 def count_digits(n: int) -> int:
     count = 0
 
@@ -36,7 +38,7 @@ def invalid_ids(lower_bound: int, upper_bound: int) -> Generator[int, None, None
     for id_ in range(lower_bound, upper_bound + 1):
         digits_count = count_digits(id_)
 
-        for chunk_size in divisors(digits_count):
+        for chunk_size in divisors_generator(digits_count):
             chunks = split_to_chunks(id_, chunk_size)
             iter_chunks = iter(chunks)
             first = next(iter_chunks)
